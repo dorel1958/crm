@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Rapoarte {
@@ -88,123 +86,6 @@ public class Rapoarte {
         listaColoaneDisponibile.add(new ColoanaRaport(37, "furn_cnp_intocmit", "CNP intocmit", false));
         listaColoaneDisponibile.add(new ColoanaRaport(38, "furn_ci_intocmit", "CI intocmit", false));
         listaColoaneDisponibile.add(new ColoanaRaport(39, "furn_intocmit", "Intocmit", false));
-    }
-
-    public void listTot() {
-        if (common.getDataSource().executaComandaRs(getComandaCompleta())) {
-            ResultSet rs = common.getDataSource().getResultSet();
-            try {
-                String numeFisExcel = "D:\\Lucru\\Java\\CRM\\rapTot.xls";
-                FisExcel fe = new FisExcel(numeFisExcel, FisExcel.TipFisExcel.xls);
-                fe.genExcel("Raport");
-                fe.startNew();
-                fe.setCurrentSheet("Raport", false);
-                RandString rand;
-                //
-                // rand titlu coloane
-                rand = new RandString();
-
-                rand.addColoana("tip_contract");
-                rand.addColoana("numar");
-                rand.addColoana("numar_client");
-                rand.addColoana("data");
-                rand.addColoana("dela_data");
-                rand.addColoana("panala_data");
-                rand.addColoana("continut");
-                rand.addColoana("valoare");
-                rand.addColoana("stare_contract");
-                rand.addColoana("subunitati");
-                rand.addColoana("observatii");
-                rand.addColoana("mod_fact");
-                rand.addColoana("nu_fact");
-                rand.addColoana("denumire");
-                rand.addColoana("denumire_posta");
-                rand.addColoana("reg_com");
-                rand.addColoana("atrib_fisc");
-                rand.addColoana("cui");
-                rand.addColoana("strada");
-                rand.addColoana("nr_strada");
-                rand.addColoana("cod_postal");
-                rand.addColoana("banca");
-                rand.addColoana("cont_banca");
-                rand.addColoana("telefon");
-                rand.addColoana("fax");
-                rand.addColoana("functie_conducator");
-                rand.addColoana("conducator");
-                rand.addColoana("functie_contabil");
-                rand.addColoana("contabil");
-
-                rand.addColoana("judet");
-                rand.addColoana("localitate");
-
-                rand.addColoana("furn_denumire");
-                rand.addColoana("furn_reg_com");
-                rand.addColoana("furn_atr_fiscal");
-                rand.addColoana("furn_cui");
-                rand.addColoana("furn_adresa");
-                rand.addColoana("cnp_intocmit");
-                rand.addColoana("ci_intocmit");
-                rand.addColoana("intocmit");
-
-                fe.addRow(2, 0, rand.getRandul(), true);
-                //
-                // continut tabel
-                while (rs.next()) {
-                    rand = new RandString();
-                    rand.addColoana(rs.getString("tip_contract"));
-                    rand.addColoana(rs.getString("numar"));
-                    rand.addColoana(rs.getString("numar_client"));
-
-                    rand.addColoana(formateazaData(rs.getString("data")));
-                    rand.addColoana(formateazaData(rs.getString("dela_data")));
-                    rand.addColoana(formateazaData(rs.getString("panala_data")));
-
-                    rand.addColoana(rs.getString("continut"));
-                    rand.addColoana(rs.getString("valoare"));
-                    rand.addColoana(rs.getString("stare_contract"));
-                    rand.addColoana(rs.getString("subunitati"));
-                    rand.addColoana(rs.getString("observatii"));
-                    rand.addColoana(rs.getString("mod_fact"));
-                    rand.addColoana(rs.getString("nu_fact"));
-                    rand.addColoana(rs.getString("denumire"));
-                    rand.addColoana(rs.getString("denumire_posta"));
-                    rand.addColoana(rs.getString("reg_com"));
-                    rand.addColoana(rs.getString("atrib_fisc"));
-                    rand.addColoana(rs.getString("cui"));
-                    rand.addColoana(rs.getString("strada"));
-                    rand.addColoana(rs.getString("nr_strada"));
-                    rand.addColoana(rs.getString("cod_postal"));
-                    rand.addColoana(rs.getString("banca"));
-                    rand.addColoana(rs.getString("cont_banca"));
-                    rand.addColoana(rs.getString("telefon"));
-                    rand.addColoana(rs.getString("fax"));
-                    rand.addColoana(rs.getString("functie_conducator"));
-                    rand.addColoana(rs.getString("conducator"));
-                    rand.addColoana(rs.getString("functie_contabil"));
-                    rand.addColoana(rs.getString("contabil"));
-
-                    rand.addColoana(rs.getString("judet"));
-                    rand.addColoana(rs.getString("localitate"));
-
-                    rand.addColoana(rs.getString("furn_denumire"));
-                    rand.addColoana(rs.getString("furn_reg_com"));
-                    rand.addColoana(rs.getString("furn_atr_fiscal"));
-                    rand.addColoana(rs.getString("furn_cui"));
-                    rand.addColoana(rs.getString("furn_adresa"));
-                    rand.addColoana(rs.getString("cnp_intocmit"));
-                    rand.addColoana(rs.getString("ci_intocmit"));
-                    rand.addColoana(rs.getString("intocmit"));
-
-                    fe.addRow(0, 0, rand.getRandul(), false);
-                }
-                fe.autoSizeColumns(0, rand.getNrColoane());
-                fe.writeToFile();
-                //
-                fe.viewFisExcel();
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Rapoarte.listTot - SQLException:" + ex.getLocalizedMessage());
-            }
-        }
     }
 
     public void list(int idSelectat) {
@@ -312,7 +193,7 @@ public class Rapoarte {
                         for (OrdObject coloanaRaport : listaColoaneRaport) {
                             ColoanaRaport col = (ColoanaRaport) coloanaRaport;
                             if (((ColoanaRaport) coloanaRaport).isFormatatCaData()) {
-                                rand.addColoana(formateazaData(rs.getString(col.getDenumire())));
+                                rand.addColoana(formateazaDataMySQL_Ro(rs.getString(col.getDenumire())));
                             } else {
                                 rand.addColoana(rs.getString(col.getDenumire()));
                             }
@@ -390,7 +271,7 @@ public class Rapoarte {
         return comanda;
     }
 
-    private String formateazaData(String dataInitiala) {
+    private String formateazaDataMySQL_Ro(String dataInitiala) {
         String dataFinala = "";
         if (dataInitiala != null) {
             if (!dataInitiala.isEmpty()) {

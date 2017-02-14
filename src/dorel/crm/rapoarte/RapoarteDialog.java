@@ -33,9 +33,9 @@ public class RapoarteDialog extends JDialog implements ActionListener {
         //<editor-fold defaultstate="collapsed" desc="Bottom Buttons...">
         List<Component> lButoane = new ArrayList<>();
         //
-        JButton butListeazaTot = new JButton("Listează tot");
-        butListeazaTot.addActionListener(this);
-        lButoane.add(butListeazaTot);
+//        JButton butListeazaTot = new JButton("Listează tot");
+//        butListeazaTot.addActionListener(this);
+//        lButoane.add(butListeazaTot);
         //
         JButton butListeaza = new JButton("Listează");
         butListeaza.addActionListener(this);
@@ -77,9 +77,9 @@ public class RapoarteDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Rapoarte rapoarte = new Rapoarte(common);
         switch (e.getActionCommand()) {
-            case "Listează tot":
-                rapoarte.listTot();
-                break;
+//            case "Listează tot":
+//                rapoarte.listTot();
+//                break;
             case "Listează":
                 JOptionPane.showMessageDialog(this, "List");
                 break;
