@@ -3,6 +3,7 @@ package dorel.crm.clase;
 import dorel.aplicatie.interfaces.CommonInterface;
 import dorel.aplicatie.interfaces.PopuleazaInterface;
 import dorel.aplicatie.interfaces.TabelaSqlInterface;
+import dorel.basicopp.Eroare;
 import dorel.basicopp.datatypes.MyString;
 import dorel.basicopp.datatypes.Numere;
 import dorel.basicopp.excelreport.FisExcel;
@@ -26,6 +27,7 @@ public class PopuleazaCRM implements PopuleazaInterface {
     CommonInterface common;
     public DateFormat dfm;
     public Calendar cal;
+    Eroare eroare;
 
     public PopuleazaCRM(CommonInterface common) {
         this.common = common;
@@ -54,11 +56,15 @@ public class PopuleazaCRM implements PopuleazaInterface {
                 break;
             case "contracte":
                 // mondosoft
-                preiaUnFisier(common, "D:\\Lucru\\Java\\CRM\\Mondosoft 2017.xls", "Lunar");
+                eroare = new Eroare();
+                eroare.setVerbose(true);
+                eroare.setShowMessageCorect(false);
+                preiaUnFisier(common, "D:\\Lucru\\Java\\CRM\\Mondosoft 2017.xls", "Lunar", 1);
                 //Valoarea '4992998' din coloana cui mai există.
                 //Valoarea '2845346' din coloana cui mai există.
                 //best
                 //...
+                eroare.afisazaFisierErori();
                 break;
             default:
                 break;
@@ -199,69 +205,68 @@ public class PopuleazaCRM implements PopuleazaInterface {
         common.getDataSource().saveInreg(localitate);
 
     }
-
-    private void populeazaLocalitatiExcel() {
-        String numeFisExcel = "D:\\Lucru\\Java\\CRM\\cod_siruta_si_uat_pe_judete.xls";
-        FisExcel fe = new FisExcel(numeFisExcel, FisExcel.TipFisExcel.xls);
-        fe.openFile();
-        fe.setCurrentSheet("toata tara", false);
-        for (int i = 8; i < 3236; i++) {
-            fe.setCurrentRow(i, false);  // nrRow incep de la 0 (nrRowExcel-1)
-            String codJudet = fe.getStringCellValue(1);  // nrCol incep de la 0 (nrColExcel-1)
-            //String codTipUAT = fe.getStringCellValue(3);
-            //String denumireTipUAT = fe.getStringCellValue(4);
-            String denumireTipUAT = "";
-            switch (fe.getStringCellValue(3)) {
-                case "11":
-                    denumireTipUAT = "Consiliu judetean";
-                    break;
-                case "12":
-                    denumireTipUAT = "Municipiu";
-                    break;
-                case "13":
-                    denumireTipUAT = "Oraș";
-                    break;
-                case "14":
-                    denumireTipUAT = "Comună";
-                    break;
-                case "15":
-                    denumireTipUAT = "Primăria M. Buc";
-                    break;
-                case "16":
-                    denumireTipUAT = "Primăria de sector al M. Buc.";
-                    break;
-
-            }
-            String codSIRUTA = fe.getStringCellValue(5);
-            //String denumire = fe.getStringCellValue(6);
-            String denumire = fe.getStringCellValue(8);
-            if (denumire.startsWith("Comuna ") || denumire.startsWith("COMUNA ")) {
-                denumire = denumire.substring(7);
-            }
-            if (denumire.startsWith("Mun. ") || denumire.startsWith("MUN. ")) {
-                denumire = denumire.substring(5);
-            }
-            if (denumire.startsWith("Municipiul ")) {
-                denumire = denumire.substring(11);
-            }
-            if (denumire.startsWith("Oras ") || denumire.startsWith("ORAS ")) {
-                denumire = denumire.substring(5);
-            }
-            if (denumire.startsWith("Primaria ")) {
-                denumire = denumire.substring(9);
-            }
-            //
-            TabelaSqlInterface localitate = common.getTabela("localitati");
-            Map<String, String> mapValoriClienti = new HashMap<>();
-            mapValoriClienti.put("judet_id", String.valueOf(Numere.stringToInt(codJudet)));
-            mapValoriClienti.put("denumire", denumire);
-            mapValoriClienti.put("tip_uat", denumireTipUAT);
-            mapValoriClienti.put("cod_siruta", codSIRUTA);
-            localitate.puneValoriDinMap(mapValoriClienti);
-            localitate.setId(0);
-            common.getDataSource().saveInreg(localitate);
-        }
-    }
+//    private void populeazaLocalitatiExcel() {
+//        String numeFisExcel = "D:\\Lucru\\Java\\CRM\\cod_siruta_si_uat_pe_judete.xls";
+//        FisExcel fe = new FisExcel(numeFisExcel, FisExcel.TipFisExcel.xls);
+//        fe.openFile();
+//        fe.setCurrentSheet("toata tara", false);
+//        for (int i = 8; i < 3236; i++) {
+//            fe.setCurrentRow(i, false);  // nrRow incep de la 0 (nrRowExcel-1)
+//            String codJudet = fe.getStringCellValue(1);  // nrCol incep de la 0 (nrColExcel-1)
+//            //String codTipUAT = fe.getStringCellValue(3);
+//            //String denumireTipUAT = fe.getStringCellValue(4);
+//            String denumireTipUAT = "";
+//            switch (fe.getStringCellValue(3)) {
+//                case "11":
+//                    denumireTipUAT = "Consiliu judetean";
+//                    break;
+//                case "12":
+//                    denumireTipUAT = "Municipiu";
+//                    break;
+//                case "13":
+//                    denumireTipUAT = "Oraș";
+//                    break;
+//                case "14":
+//                    denumireTipUAT = "Comună";
+//                    break;
+//                case "15":
+//                    denumireTipUAT = "Primăria M. Buc";
+//                    break;
+//                case "16":
+//                    denumireTipUAT = "Primăria de sector al M. Buc.";
+//                    break;
+//
+//            }
+//            String codSIRUTA = fe.getStringCellValue(5);
+//            //String denumire = fe.getStringCellValue(6);
+//            String denumire = fe.getStringCellValue(8);
+//            if (denumire.startsWith("Comuna ") || denumire.startsWith("COMUNA ")) {
+//                denumire = denumire.substring(7);
+//            }
+//            if (denumire.startsWith("Mun. ") || denumire.startsWith("MUN. ")) {
+//                denumire = denumire.substring(5);
+//            }
+//            if (denumire.startsWith("Municipiul ")) {
+//                denumire = denumire.substring(11);
+//            }
+//            if (denumire.startsWith("Oras ") || denumire.startsWith("ORAS ")) {
+//                denumire = denumire.substring(5);
+//            }
+//            if (denumire.startsWith("Primaria ")) {
+//                denumire = denumire.substring(9);
+//            }
+//            //
+//            TabelaSqlInterface localitate = common.getTabela("localitati");
+//            Map<String, String> mapValoriClienti = new HashMap<>();
+//            mapValoriClienti.put("judet_id", String.valueOf(Numere.stringToInt(codJudet)));
+//            mapValoriClienti.put("denumire", denumire);
+//            mapValoriClienti.put("tip_uat", denumireTipUAT);
+//            mapValoriClienti.put("cod_siruta", codSIRUTA);
+//            localitate.puneValoriDinMap(mapValoriClienti);
+//            localitate.setId(0);
+//            common.getDataSource().saveInreg(localitate);
+//        }
+//    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="conturi_banca">
@@ -346,7 +351,7 @@ public class PopuleazaCRM implements PopuleazaInterface {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="clienti si contracte apelat din contracte">
-    public void preiaUnFisier(CommonInterface common, String numeFisExcel, String modFact) {
+    public void preiaUnFisier(CommonInterface common, String numeFisExcel, String modFact, int furnizor_id) {
         //String numeFisExcel = "D:\\Lucru\\Java\\CRM\\Mondosoft 2017.xlsx";
         FisExcel fe = new FisExcel(numeFisExcel, FisExcel.TipFisExcel.xls);
         fe.openFile();
@@ -392,6 +397,7 @@ public class PopuleazaCRM implements PopuleazaInterface {
             mapValoriClienti.put("denumire_posta", denumire_posta);
             mapValoriClienti.put("atribut_fiscal", "");
             mapValoriClienti.put("cui", cui);
+            eroare.setInfo("Client:" + denumire);
             String judet_id = getIdJudet(cod_judet);
             mapValoriClienti.put("judet_id", judet_id);
             mapValoriClienti.put("localitate_id", getIdLocalitate(localitate, judet_id));
@@ -414,7 +420,7 @@ public class PopuleazaCRM implements PopuleazaInterface {
             Map<String, String> mapValoriContracte = new HashMap<>();
             mapValoriContracte.put("tip_contract", "Mentenanta");
             mapValoriContracte.put("client_id", String.valueOf(idClient));
-            mapValoriContracte.put("furnizor_id", "1");
+            mapValoriContracte.put("furnizor_id", String.valueOf(furnizor_id));
             //Mentenanta
             mapValoriContracte.put("numar", numar);
             if (data == null) {
@@ -437,6 +443,7 @@ public class PopuleazaCRM implements PopuleazaInterface {
             mapValoriContracte.put("observatii", observatii);
             mapValoriContracte.put("mod_fact", modFact);
             mapValoriContracte.put("stare_contract", "Valabil");
+            mapValoriContracte.put("nu_fact", "F");
             contracte.puneValoriDinMap(mapValoriContracte);
             contracte.setId(0);
             common.getDataSource().saveInreg(contracte);
@@ -488,24 +495,25 @@ public class PopuleazaCRM implements PopuleazaInterface {
             case "[VL]":
                 return "40";
         }
-        JOptionPane.showMessageDialog(null, "Cod judet necunoscut:" + cod);
+        eroare.writeEroare("Cod judet necunoscut:" + cod);
         return "1";
     }
 
     private String getIdLocalitate(String denumire, String judet_id) {
-        String denumireExcel=MyString.faraCarRom(denumire).toLowerCase();
+        String denumireExcel = MyString.faraCarRom(denumire).toLowerCase();
         List<TabelaSqlInterface> localitati = common.getDataSource().listInreg("localitati", 0, "denumire", "");
         for (TabelaSqlInterface localitate : localitati) {
             String l_judet_id = localitate.getColoane().getValoare("judet_id");
             if (l_judet_id.equals(judet_id)) {
                 String l_denumire = localitate.getColoane().getValoare("denumire");
-                String denumireMySQL=MyString.faraCarRom(l_denumire).toLowerCase();
+                String denumireMySQL = MyString.faraCarRom(l_denumire).toLowerCase();
                 if (denumireMySQL.equals(denumireExcel)) {
                     return String.valueOf(localitate.getId());
                 }
             }
         }
-        System.out.println("Nu am gasit:" + denumire + " judet=" + judet_id);
+        //System.out.println("Nu am gasit:" + denumire + " judet=" + judet_id);
+        eroare.writeEroare("Nu am gasit:" + denumire + " judet=" + judet_id);
         return "0";
     }
     //</editor-fold>

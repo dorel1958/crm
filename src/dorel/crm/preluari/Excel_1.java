@@ -38,8 +38,8 @@ public class Excel_1 {
             String cui = fe.getStringCellValue(5);
             String strada = fe.getStringCellValue(6);
             String nr_strada = fe.getStringCellValue(7);
-            String localitate = fe.getStringCellValue(8);
-            String judet = fe.getStringCellValue(9);
+            //String localitate = fe.getStringCellValue(8);
+            //String judet = fe.getStringCellValue(9);
             String cod_judet = fe.getStringCellValue(10);
             String cont_banca = fe.getStringCellValue(11);
             String banca = fe.getStringCellValue(12);
@@ -118,6 +118,7 @@ public class Excel_1 {
             mapValoriContracte.put("valoare", valoare);
             mapValoriContracte.put("observatii", observatii);
             mapValoriContracte.put("mod_fact", modFact);
+            mapValoriContracte.put("nu_fact", "T");
             contracte.puneValoriDinMap(mapValoriContracte);
             contracte.setId(0);
             common.getDataSource().saveInreg(contracte);

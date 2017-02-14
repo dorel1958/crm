@@ -14,10 +14,38 @@ import dorel.aplicatie.tabele.clase.TabelaSqlHelper;
 import dorel.crm.actiuni.ActiuneRaport;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
 public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
+
+    private List<String> tipContract;
+    private List<String> stareContract;
+    private List<String> modFacturare;
+
+    public TabelaSqlFactoryCRM() {
+        tipContract = new LinkedList<>();
+        tipContract.add("");
+        tipContract.add("Furnizare");
+        tipContract.add("Mentenanta");
+        //
+        stareContract = new LinkedList<>();
+        stareContract.add("");
+        stareContract.add("Precontract");
+        stareContract.add("Trimis");
+        stareContract.add("Valabil");
+        stareContract.add("Expirat");
+        stareContract.add("În așteptare");
+        //
+        modFacturare = new LinkedList<>();
+        modFacturare.add("");
+        modFacturare.add("Lunar");
+        modFacturare.add("La 2 luni");
+        modFacturare.add("Trimestrial");
+        modFacturare.add("Semestrial");
+        modFacturare.add("Anual");
+    }
 
     @Override
     public TabelaSqlInterface getTabela(String numeTabela, CommonInterface common) {
@@ -770,11 +798,7 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipControl = PatraticaControl.TipControl.COMBOBOX;
                 coloana.dimX = 20;
                 coloana.labelControl = "Tip contract";
-                List<String> listaTip = new ArrayList<>();
-                listaTip.add("");
-                listaTip.add("Furnizare");
-                listaTip.add("Mentenanta");
-                MyComboBoxModel comboBoxModelTip = new MyComboBoxModel(listaTip);
+                MyComboBoxModel comboBoxModelTip = new MyComboBoxModel(tipContract);
                 coloana.comboBoxModel = comboBoxModelTip;
                 //
                 coloana.tipTestCorect = ColoanaTabela.TipTestCorect.EMPTY_STRING;
@@ -948,17 +972,30 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipControl = PatraticaControl.TipControl.COMBOBOX;
                 coloana.dimX = 20;
                 coloana.labelControl = "Stare";
-                List<String> listaStare = new ArrayList<>();
-                listaStare.add("");
-                listaStare.add("Precontract");
-                listaStare.add("Trimis");
-                listaStare.add("Valabil");
-                listaStare.add("Expirat");
-                MyComboBoxModel comboBoxModelStare = new MyComboBoxModel(listaStare);
+                MyComboBoxModel comboBoxModelStare = new MyComboBoxModel(stareContract);
                 coloana.comboBoxModel = comboBoxModelStare;
                 //
                 coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
                 //coloana.mesajInCorect = "Nu ați selectat Starea contractului.";
+                coloane.addColoana(coloana);
+                // -------------------
+                coloana = new ColoanaTabela();
+                coloana.setNume("memento");
+                coloana.tipDataJava = ColoanaTabela.TipDataJava.STRING;
+                //
+                coloana.tipDataSql = ColoanaTabela.TipDataSql.CHAR;
+                coloana.lungimeSql = 255;
+                coloana.precizieSql = 0;
+                //
+                coloana.setValoareImplicita("");
+                //
+                coloana.tipControl = PatraticaControl.TipControl.TEXT;
+                coloana.dimX = 30;
+                coloana.labelControl = "Memento";
+                //
+                coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
+                //coloana.mesajInCorect = "Nu ați introdus tipul contractului.";
+                //
                 coloane.addColoana(coloana);
                 // -------------------
                 coloana = new ColoanaTabela();
@@ -1009,14 +1046,7 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipControl = PatraticaControl.TipControl.COMBOBOX;
                 coloana.dimX = 20;
                 coloana.labelControl = "Mod facturare";
-                List<String> listaModFact = new ArrayList<>();
-                listaModFact.add("");
-                listaModFact.add("Lunar");
-                listaModFact.add("La 2 luni");
-                listaModFact.add("Trimestrial");
-                listaModFact.add("Semestrial");
-                listaModFact.add("Anual");
-                MyComboBoxModel comboBoxModelModFact = new MyComboBoxModel(listaModFact);
+                MyComboBoxModel comboBoxModelModFact = new MyComboBoxModel(modFacturare);
                 coloana.comboBoxModel = comboBoxModelModFact;
                 //
                 coloana.tipTestCorect = ColoanaTabela.TipTestCorect.EMPTY_STRING;
@@ -1085,6 +1115,21 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloane.addColoana(coloana);
                 // -------------------
                 coloana = new ColoanaTabela();
+                coloana.setNume("filtru_tip_contract");
+                coloana.tipDataJava = ColoanaTabela.TipDataJava.STRING;
+                //
+                coloana.tipDataSql = ColoanaTabela.TipDataSql.CHAR;
+                coloana.lungimeSql = 15;
+                //
+                coloana.tipControl = PatraticaControl.TipControl.COMBOBOX;
+                coloana.dimX = 20;
+                coloana.labelControl = "Filtru Tip contract";
+                coloana.comboBoxModel = new MyComboBoxModel(tipContract);
+                //
+                coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
+                coloane.addColoana(coloana);
+                // -------------------
+                coloana = new ColoanaTabela();
                 coloana.setNume("filtru_mod_fact");
                 coloana.tipDataJava = ColoanaTabela.TipDataJava.STRING;
                 //
@@ -1094,14 +1139,7 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipControl = PatraticaControl.TipControl.COMBOBOX;
                 coloana.dimX = 20;
                 coloana.labelControl = "Filtru Mod facturare";
-                List<String> listaFiltruModFact = new ArrayList<>();
-                listaFiltruModFact.add("");
-                listaFiltruModFact.add("Lunar");
-                listaFiltruModFact.add("La 2 luni");
-                listaFiltruModFact.add("Trimestrial");
-                listaFiltruModFact.add("Semestrial");
-                listaFiltruModFact.add("Anual");
-                MyComboBoxModel comboBoxModelFiltruModFact = new MyComboBoxModel(listaFiltruModFact);
+                MyComboBoxModel comboBoxModelFiltruModFact = new MyComboBoxModel(modFacturare);
                 coloana.comboBoxModel = comboBoxModelFiltruModFact;
                 //
                 coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
@@ -1158,6 +1196,52 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
                 //coloana.mesajInCorect = "Nu ați introdus data curenta.";
                 //coloana.uniqueValues = true;
+                coloane.addColoana(coloana);
+                // ------------------
+                coloana = new ColoanaTabela();
+                coloana.setNume("filtru_numai_fact");
+                coloana.tipDataJava = ColoanaTabela.TipDataJava.STRING;
+                //
+                coloana.tipDataSql = ColoanaTabela.TipDataSql.CHAR;
+                coloana.lungimeSql = 1;
+                //
+                coloana.setValoareImplicita("F");
+                //
+                coloana.tipControl = PatraticaControl.TipControl.CHECKBOX;
+                coloana.labelControl = "Numai contracte ce se facturează";
+                //
+                coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
+                coloane.addColoana(coloana);
+                // ------------------
+                coloana = new ColoanaTabela();
+                coloana.setNume("filtru_numai_nu_fact");
+                coloana.tipDataJava = ColoanaTabela.TipDataJava.STRING;
+                //
+                coloana.tipDataSql = ColoanaTabela.TipDataSql.CHAR;
+                coloana.lungimeSql = 1;
+                //
+                coloana.setValoareImplicita("T");
+                //
+                coloana.tipControl = PatraticaControl.TipControl.CHECKBOX;
+                coloana.labelControl = "Numai contracte ce NU se facturează";
+                //
+                coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
+                coloane.addColoana(coloana);
+                // -------------------
+                coloana = new ColoanaTabela();
+                coloana.setNume("filtru_stare_contract");
+                coloana.tipDataJava = ColoanaTabela.TipDataJava.STRING;
+                //
+                coloana.tipDataSql = ColoanaTabela.TipDataSql.CHAR;
+                coloana.lungimeSql = 15;
+                //
+                coloana.tipControl = PatraticaControl.TipControl.COMBOBOX;
+                coloana.dimX = 20;
+                coloana.labelControl = "Filtru Stare contract";
+                MyComboBoxModel comboBoxModelFiltruStareContract = new MyComboBoxModel(stareContract);
+                coloana.comboBoxModel = comboBoxModelFiltruStareContract;
+                //
+                coloana.tipTestCorect = ColoanaTabela.TipTestCorect.NU_TESTEZ_CORECT;
                 coloane.addColoana(coloana);
                 // ------------------
                 // ---------- COLOANE --------

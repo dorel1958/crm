@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Rapoarte {
@@ -27,16 +29,21 @@ public class Rapoarte {
     public Rapoarte(CommonInterface common) {
         this.common = common;
         dfmRo = new SimpleDateFormat("dd.MM.yyyy");
-        dfmRo.setTimeZone(TimeZone.getTimeZone("Europe/Bucharest")); // EET, Eastern Eeuropean Time
+        dfmRo.setTimeZone(TimeZone.getTimeZone("Europe/Bucharest")); // EET, Eastern European Time
         dfmMySql = new SimpleDateFormat("yyyy-MM-dd");
-        dfmMySql.setTimeZone(TimeZone.getTimeZone("Europe/Bucharest")); // EET, Eastern Eeuropean Time
+        dfmMySql.setTimeZone(TimeZone.getTimeZone("Europe/Bucharest")); // EET, Eastern European Time
+        String strDataUserCurent = common.getUserCurent().getAnc() + "-" + common.getUserCurent().getLunac() + "-" + common.getUserCurent().getZiuac();
         //
         listaColoaneFiltru = new ArrayList<>();
         listaColoaneFiltru.add(new ColoanaFiltru("filtru", "", false, false, false));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_tip_contract", "tip_contract=", false, true, false));
         listaColoaneFiltru.add(new ColoanaFiltru("filtru_mod_fact", "mod_fact=", false, true, false));
         listaColoaneFiltru.add(new ColoanaFiltru("filtru_judet_id", "jud.id=", false, false, false));
         listaColoaneFiltru.add(new ColoanaFiltru("filtru_furnizor_id", "furn.id=", false, false, false));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_in_perioada", "'2016-02-06' BETWEEN dela_data AND panala_data", false, false, true));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_in_perioada", "'" + strDataUserCurent + "' BETWEEN dela_data AND panala_data", false, false, true));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_stare_contract", "stare_contract=", false, true, false));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_numai_fact", "nu_fact='F'", false, false, true));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_numai_nu_fact", "nu_fact='T'", false, false, true));
         //
         listaColoaneDisponibile = new ArrayList<>();
         listaColoaneDisponibile.add(new ColoanaRaport(1, "tip_contract", "Tip contract", false));
@@ -265,7 +272,7 @@ public class Rapoarte {
                             }
                         }
                     }
-                    //System.out.println(filtruWhere);
+                    System.out.println(filtruWhere);
                 }
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Rapoarte.list 1 - SQLException:" + ex.getLocalizedMessage());
@@ -304,7 +311,11 @@ public class Rapoarte {
                         rand = new RandString();
                         for (OrdObject coloanaRaport : listaColoaneRaport) {
                             ColoanaRaport col = (ColoanaRaport) coloanaRaport;
-                            rand.addColoana(rs.getString(col.getDenumire()));
+                            if (((ColoanaRaport) coloanaRaport).isFormatatCaData()) {
+                                rand.addColoana(formateazaData(rs.getString(col.getDenumire())));
+                            } else {
+                                rand.addColoana(rs.getString(col.getDenumire()));
+                            }
                         }
 
                         fe.addRow(0, 0, rand.getRandul(), false);
