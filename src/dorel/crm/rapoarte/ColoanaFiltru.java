@@ -1,57 +1,41 @@
 package dorel.crm.rapoarte;
 
+import dorel.aplicatie.tabele.clase.ColoanaTabela;
+
 public class ColoanaFiltru {
 
-    private String denumire;
-    private String filtru_where;
-    private boolean valoareaIsString;
-    private boolean valoareaIsData;
-    private boolean valoareaIsLogical;
+    public enum TipFiltru {
+
+        COMPARE_WITH_ID,          // compara cu ID DACA id!=0
+        COMPARE_WITH_STRING,      //
+        COMPARE_WITH_NUMBER,      // = numar
+        COMPARE_WITH_DATE,        // compara cu data formatata tip MySQL
+        FREE_FORM,         // pune valoarea campului SI ATAT
+        BOOLEAN_FIX_FORM,  // daca valoarea unui camp boolean == "T" -> pune textul fix: filtru_where
+    }
+
+    private final String denumire;
+    private final TipFiltru tipFiltru;
+    private final String filtru_where;
 
     //<editor-fold defaultstate="collapsed" desc="Get Set">
-    public boolean valoareaIsLogical() {
-        return valoareaIsLogical;
-    }
-
-    public boolean valoareaIsData() {
-        return valoareaIsData;
-    }
-
-    public void setValoareaIsData(boolean valoareaIsData) {
-        this.valoareaIsData = valoareaIsData;
-    }
-
-    public boolean valoareaIsString() {
-        return valoareaIsString;
-    }
-
-    public void setValoareaIsString(boolean valoareaIsString) {
-        this.valoareaIsString = valoareaIsString;
+    public TipFiltru getTipFiltru() {
+        return tipFiltru;
     }
 
     public String getFiltru_where() {
         return filtru_where;
     }
 
-    public void setFiltru_where(String filtru_where) {
-        this.filtru_where = filtru_where;
-    }
-
     public String getDenumire() {
         return denumire;
     }
-
-    public void setDenumire(String denumire) {
-        this.denumire = denumire;
-    }
     //</editor-fold>
 
-    public ColoanaFiltru(String denumire, String filtru_where, boolean valoareaIsData, boolean valoareaIsString, boolean valoareaIsLogical) {
+    public ColoanaFiltru(String denumire, String filtru_where, TipFiltru tipFiltru) {
         this.denumire = denumire;
+        this.tipFiltru = tipFiltru;
         this.filtru_where = filtru_where;
-        this.valoareaIsData=valoareaIsData;
-        this.valoareaIsString=valoareaIsString;
-        this.valoareaIsLogical=valoareaIsLogical;
     }
 
 }

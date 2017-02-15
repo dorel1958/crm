@@ -3,6 +3,7 @@ package dorel.crm.rapoarte;
 import dorel.aplicatie.interfaces.CommonInterface;
 import dorel.basicopp.excelreport.FisExcel;
 import dorel.basicopp.excelreport.RandString;
+import dorel.basicopp.server.ServerTools;
 import dorel.metodenumerice.ordonare.OrdObject;
 import dorel.metodenumerice.ordonare.Ordonare;
 import java.sql.ResultSet;
@@ -23,6 +24,7 @@ public class Rapoarte {
     private final DateFormat dfmMySql;
     private final List<ColoanaRaport> listaColoaneDisponibile;
     private final List<ColoanaFiltru> listaColoaneFiltru;
+    private final boolean afisazaConditiaFiltru = false;  // numai Debug
 
     public Rapoarte(CommonInterface common) {
         this.common = common;
@@ -33,59 +35,63 @@ public class Rapoarte {
         String strDataUserCurent = common.getUserCurent().getAnc() + "-" + common.getUserCurent().getLunac() + "-" + common.getUserCurent().getZiuac();
         //
         listaColoaneFiltru = new ArrayList<>();
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru", "", false, false, false));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_tip_contract", "tip_contract=", false, true, false));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_mod_fact", "mod_fact=", false, true, false));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_judet_id", "jud.id=", false, false, false));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_furnizor_id", "furn.id=", false, false, false));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_in_perioada", "'" + strDataUserCurent + "' BETWEEN dela_data AND panala_data", false, false, true));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_stare_contract", "stare_contract=", false, true, false));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_numai_fact", "nu_fact='F'", false, false, true));
-        listaColoaneFiltru.add(new ColoanaFiltru("filtru_numai_nu_fact", "nu_fact='T'", false, false, true));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru", "", ColoanaFiltru.TipFiltru.FREE_FORM));
+        //
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_tip_contract", "tip_contract=", ColoanaFiltru.TipFiltru.COMPARE_WITH_STRING));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_mod_fact", "mod_fact=", ColoanaFiltru.TipFiltru.COMPARE_WITH_STRING));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_stare_contract", "stare_contract=", ColoanaFiltru.TipFiltru.COMPARE_WITH_STRING));
+        //
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_judet_id", "jud.id=", ColoanaFiltru.TipFiltru.COMPARE_WITH_ID));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_furnizor_id", "furn.id=", ColoanaFiltru.TipFiltru.COMPARE_WITH_ID));
+        //
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_in_perioada", "'" + strDataUserCurent + "' BETWEEN dela_data AND panala_data", ColoanaFiltru.TipFiltru.BOOLEAN_FIX_FORM));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_numai_fact", "nu_fact='F'", ColoanaFiltru.TipFiltru.BOOLEAN_FIX_FORM));
+        listaColoaneFiltru.add(new ColoanaFiltru("filtru_numai_nu_fact", "nu_fact='T'", ColoanaFiltru.TipFiltru.BOOLEAN_FIX_FORM));
         //
         listaColoaneDisponibile = new ArrayList<>();
-        listaColoaneDisponibile.add(new ColoanaRaport(1, "tip_contract", "Tip contract", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(2, "numar", "Număr contract", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(3, "numar_client", "Număr contract la client", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(4, "data", "Data contract", true));
-        listaColoaneDisponibile.add(new ColoanaRaport(5, "dela_data", "De la data", true));
-        listaColoaneDisponibile.add(new ColoanaRaport(6, "panala_data", "Pana la data", true));
-        listaColoaneDisponibile.add(new ColoanaRaport(7, "continut", "Continut", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(8, "valoare", "Valoare", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(9, "stare_contract", "Stare contract", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(10, "subunitati", "Subunitati", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(11, "observatii", "Observatii", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(12, "mod_fact", "Mod facturare", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(13, "nu_fact", "Nu factureaza", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("tip_contract", "Tip contract", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("numar", "Număr contract", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("numar_client", "Număr contract la client", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("data", "Data contract", true));
+        listaColoaneDisponibile.add(new ColoanaRaport("dela_data", "De la data", true));
+        listaColoaneDisponibile.add(new ColoanaRaport("panala_data", "Pana la data", true));
+        listaColoaneDisponibile.add(new ColoanaRaport("continut", "Continut", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("valoare", "Valoare", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("stare_contract", "Stare contract", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("memento", "Memento", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("subunitati", "Subunitati", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("observatii", "Observatii", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("mod_fact", "Mod facturare", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("nu_fact", "Nu factureaza", false));
         //
-        listaColoaneDisponibile.add(new ColoanaRaport(14, "cli_denumire", "Denumire", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(15, "cli_denumire_posta", "Denumire posta", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(16, "cli_reg_com", "R.C.", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(17, "cli_atrib_fisc", "Atribut fiscal", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(18, "cli_cui", "CUI", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(19, "cli_strada", "Strada", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(20, "cli_nr_strada", "Numar strada", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(21, "cli_cod_postal", "Cod postal", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(22, "cli_banca", "Banca", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(23, "cli_cont_banca", "Cont banca", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(24, "cli_telefon", "Telefon", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(25, "cli_fax", "Fax", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(26, "cli_functie_conducator", "Functie conducator", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(27, "cli_conducator", "Conducator", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(28, "cli_functie_contabil", "Functie contabil", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(29, "cli_contabil", "Contabil", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_denumire", "Denumire", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_denumire_posta", "Denumire posta", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_reg_com", "R.C.", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_atrib_fisc", "Atribut fiscal", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_cui", "CUI", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_strada", "Strada", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_nr_strada", "Numar strada", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_cod_postal", "Cod postal", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_banca", "Banca", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_cont_banca", "Cont banca", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_telefon", "Telefon", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_fax", "Fax", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_functie_conducator", "Functie conducator", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_conducator", "Conducator", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_functie_contabil", "Functie contabil", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_contabil", "Contabil", false));
         //
-        listaColoaneDisponibile.add(new ColoanaRaport(30, "cli_judet", "Judet", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(31, "cli_localitate", "Localitate", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_judet", "Judet", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("cli_localitate", "Localitate", false));
         //
-        listaColoaneDisponibile.add(new ColoanaRaport(32, "furn_denumire", "Furnizor", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(33, "furn_reg_com", "R.C. furnizor", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(34, "furn_atr_fiscal", "Atribut fiscal furnizor", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(35, "furn_cui", "cui furnizor", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(36, "furn_adresa", "Adrsa furnizor", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(37, "furn_cnp_intocmit", "CNP intocmit", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(38, "furn_ci_intocmit", "CI intocmit", false));
-        listaColoaneDisponibile.add(new ColoanaRaport(39, "furn_intocmit", "Intocmit", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_denumire", "Furnizor", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_reg_com", "R.C. furnizor", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_atr_fiscal", "Atribut fiscal furnizor", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_cui", "cui furnizor", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_adresa", "Adrsa furnizor", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_cnp_intocmit", "CNP intocmit", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_ci_intocmit", "CI intocmit", false));
+        listaColoaneDisponibile.add(new ColoanaRaport("furn_intocmit", "Intocmit", false));
     }
 
     public void list(int idSelectat) {
@@ -100,75 +106,107 @@ public class Rapoarte {
             List<OrdObject> listaColoaneRaport = new ArrayList<>();
             try {
                 if (rs.next()) {
-                    // coloanele incluse in raport
+
+                    //<editor-fold defaultstate="collapsed" desc="coloane incluse in raport">
                     for (ColoanaRaport coloanaRaport : listaColoaneDisponibile) {
                         int poz = rs.getInt(coloanaRaport.getDenumire());
                         if (poz > 0) {
                             listaColoaneRaport.add(new ColoanaRaport(poz, coloanaRaport.getDenumire(), coloanaRaport.getTitluColoana(), coloanaRaport.isFormatatCaData()));
                         }
                     }
-                    // conditiile de filtrare
+                    Ordonare.ordoneazaList(listaColoaneRaport, true);
+                    //</editor-fold>
+
+                    //<editor-fold defaultstate="collapsed" desc="conditii de filtrare">
                     boolean ePrima = true;
                     for (ColoanaFiltru coloanaFiltru : listaColoaneFiltru) {
                         String valoare = rs.getString(coloanaFiltru.getDenumire());
-                        if (coloanaFiltru.valoareaIsData()) {
-                            if (!valoare.isEmpty()) {
-                                if (ePrima) {
-                                    ePrima = false;
-                                } else {
-                                    filtruWhere += " AND";
-                                }
-                                filtruWhere += " " + coloanaFiltru.getFiltru_where() + "'" + dfmMySql.format(dfmRo.parse(valoare)) + "'";
-                            }
-                        } else {
-                            if (coloanaFiltru.valoareaIsString()) {
+                        switch (coloanaFiltru.getTipFiltru()) {
+                            case COMPARE_WITH_DATE:
                                 if (!valoare.isEmpty()) {
                                     if (ePrima) {
                                         ePrima = false;
                                     } else {
                                         filtruWhere += " AND";
                                     }
-                                    filtruWhere += " " + coloanaFiltru.getFiltru_where() + "'" + valoare + "'";
+                                    filtruWhere += " " + coloanaFiltru.getFiltru_where() + ServerTools.sqlString(dfmMySql.format(dfmRo.parse(valoare)));
                                 }
-                            } else {
-                                if (coloanaFiltru.valoareaIsLogical()) {
-                                    if (valoare.equals("T")) {
-                                        if (ePrima) {
-                                            ePrima = false;
-                                        } else {
-                                            filtruWhere += " AND";
-                                        }
-                                        filtruWhere += " " + coloanaFiltru.getFiltru_where();
+                                break;
+                            case COMPARE_WITH_STRING:
+                                if (!valoare.isEmpty()) {
+                                    if (ePrima) {
+                                        ePrima = false;
+                                    } else {
+                                        filtruWhere += " AND";
                                     }
-                                } else {
-                                    if (!(valoare.equals("0") || valoare.isEmpty())) {
-                                        if (ePrima) {
-                                            ePrima = false;
-                                        } else {
-                                            filtruWhere += " AND";
-                                        }
-                                        filtruWhere += " " + coloanaFiltru.getFiltru_where() + valoare;
-                                    }
+                                    filtruWhere += " " + coloanaFiltru.getFiltru_where() + ServerTools.sqlString(valoare);
                                 }
-                            }
+                                break;
+                            case BOOLEAN_FIX_FORM:
+                                if (valoare.equals("T")) {
+                                    if (ePrima) {
+                                        ePrima = false;
+                                    } else {
+                                        filtruWhere += " AND";
+                                    }
+                                    filtruWhere += " " + coloanaFiltru.getFiltru_where();
+                                }
+                                break;
+                            case COMPARE_WITH_NUMBER:
+                                if (!valoare.isEmpty()) {
+                                    if (ePrima) {
+                                        ePrima = false;
+                                    } else {
+                                        filtruWhere += " AND";
+                                    }
+                                    filtruWhere += " " + coloanaFiltru.getFiltru_where() + valoare;
+                                }
+                                break;
+                            case COMPARE_WITH_ID:
+                                if (!(valoare.isEmpty() || valoare.trim().equals("0"))) {
+                                    if (ePrima) {
+                                        ePrima = false;
+                                    } else {
+                                        filtruWhere += " AND";
+                                    }
+                                    filtruWhere += " " + coloanaFiltru.getFiltru_where() + valoare;
+                                }
+                                break;
+                            case FREE_FORM:
+                                if (!valoare.isEmpty()) {
+                                    if (ePrima) {
+                                        ePrima = false;
+                                    } else {
+                                        filtruWhere += " AND";
+                                    }
+                                    filtruWhere += " " + valoare;
+                                }
+                                break;
+                            default:
+                                JOptionPane.showMessageDialog(null, "Rapoarte.list - coloanaFiltru.getTipFiltru() necunoscut:" + coloanaFiltru.getTipFiltru().toString());
                         }
                     }
-                    System.out.println(filtruWhere);
+                    if (afisazaConditiaFiltru) {
+                        System.out.println(filtruWhere);
+                    }
+                    //</editor-fold>
                 }
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Rapoarte.list 1 - SQLException:" + ex.getLocalizedMessage());
             } catch (ParseException ex) {
                 JOptionPane.showMessageDialog(null, "Rapoarte.list 1 - ParseException:" + ex.getLocalizedMessage());
             }
-            Ordonare.ordoneazaList(listaColoaneRaport, true);
-            //
-            // incarca date raport
+
+            //<editor-fold defaultstate="collapsed" desc="incarca date + raport excel">
             comanda = getComandaCompleta();
 
             if (!filtruWhere.isEmpty()) {
                 comanda += " WHERE";
                 comanda += filtruWhere;
             }
+            //if (afisazaConditiaFiltru) {
+            //    System.out.println(comanda);
+            //}
             if (common.getDataSource().executaComandaRs(comanda)) {
                 rs = common.getDataSource().getResultSet();
                 try {
@@ -179,15 +217,16 @@ public class Rapoarte {
                     fe.setCurrentSheet("Raport", false);
                     RandString rand;
                     //
-                    // titlu coloane
+                    //<editor-fold defaultstate="collapsed" desc="titlu coloane">
                     rand = new RandString();
                     for (OrdObject coloanaRaport : listaColoaneRaport) {
                         ColoanaRaport col = (ColoanaRaport) coloanaRaport;
                         rand.addColoana(col.getTitluColoana());
                     }
                     fe.addRow(2, 0, rand.getRandul(), true);
+                    //</editor-fold>
                     //
-                    // continut
+                    //<editor-fold defaultstate="collapsed" desc="continut">
                     while (rs.next()) {
                         rand = new RandString();
                         for (OrdObject coloanaRaport : listaColoaneRaport) {
@@ -201,6 +240,7 @@ public class Rapoarte {
 
                         fe.addRow(0, 0, rand.getRandul(), false);
                     }
+                    //</editor-fold>
                     fe.autoSizeColumns(0, rand.getNrColoane());
                     fe.writeToFile();
                     //
@@ -209,6 +249,7 @@ public class Rapoarte {
                     JOptionPane.showMessageDialog(null, "Rapoarte.list 2 - SQLException:" + ex.getLocalizedMessage());
                 }
             }
+            //</editor-fold>
         }
     }
 
@@ -223,10 +264,12 @@ public class Rapoarte {
         comanda += ",con.continut";
         comanda += ",con.valoare";
         comanda += ",con.stare_contract";
+        comanda += ",con.memento";
         comanda += ",con.subunitati";
         comanda += ",con.observatii";
         comanda += ",con.mod_fact";
         comanda += ",con.nu_fact";
+        comanda += ",con.viz";
         //
         comanda += ",cli.denumire AS cli_denumire";
         comanda += ",cli.denumire_posta AS cli_denumire_posta";

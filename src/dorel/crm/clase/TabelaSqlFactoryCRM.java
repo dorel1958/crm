@@ -1205,7 +1205,7 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipDataSql = ColoanaTabela.TipDataSql.CHAR;
                 coloana.lungimeSql = 1;
                 //
-                coloana.setValoareImplicita("F");
+                coloana.setValoareImplicita("T");
                 //
                 coloana.tipControl = PatraticaControl.TipControl.CHECKBOX;
                 coloana.labelControl = "Numai contracte ce se facturează";
@@ -1220,7 +1220,7 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipDataSql = ColoanaTabela.TipDataSql.CHAR;
                 coloana.lungimeSql = 1;
                 //
-                coloana.setValoareImplicita("T");
+                coloana.setValoareImplicita("F");
                 //
                 coloana.tipControl = PatraticaControl.TipControl.CHECKBOX;
                 coloana.labelControl = "Numai contracte ce NU se facturează";
@@ -1376,6 +1376,21 @@ public class TabelaSqlFactoryCRM extends TabelaSqlFactoryHelper {
                 coloana.tipControl = PatraticaControl.TipControl.TEXT;
                 coloana.dimX = 5;
                 coloana.labelControl = "Stare contract";
+                //
+                coloana.tipTestCorect = ColoanaTabela.TipTestCorect.VALID_INTEGER;
+                coloane.addColoana(coloana);
+                // ------------------
+                coloana = new ColoanaTabela();
+                coloana.setNume("memento");
+                coloana.tipDataJava = ColoanaTabela.TipDataJava.INTEGER;
+                //
+                coloana.tipDataSql = ColoanaTabela.TipDataSql.INTEGER;
+                //
+                coloana.setValoareImplicita("0");
+                //
+                coloana.tipControl = PatraticaControl.TipControl.TEXT;
+                coloana.dimX = 5;
+                coloana.labelControl = "Memento";
                 //
                 coloana.tipTestCorect = ColoanaTabela.TipTestCorect.VALID_INTEGER;
                 coloane.addColoana(coloana);

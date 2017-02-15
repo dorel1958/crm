@@ -8,7 +8,6 @@ public class ColoanaRaport extends OrdObjectHelper {
     private String denumire;
     private boolean formatatCaData;
     private String titluColoana;
-    //private String filtru_where;
 
     //<editor-fold defaultstate="collapsed" desc="Get Set">
     public String getTitluColoana() {
@@ -49,7 +48,13 @@ public class ColoanaRaport extends OrdObjectHelper {
         this.denumire = denumire;
         this.formatatCaData=formatatCaData;
         this.titluColoana=titluColoana;
-        //this.filtru_where=filtru_where;
+    }
+
+    public ColoanaRaport(String denumire, String titluColoana, boolean formatatCaData) {
+        this.index = 0;
+        this.denumire = denumire;
+        this.formatatCaData=formatatCaData;
+        this.titluColoana=titluColoana;
     }
 
     @Override
